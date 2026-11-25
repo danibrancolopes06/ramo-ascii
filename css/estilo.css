@@ -1,0 +1,175 @@
+/* Colores de la página */
+:root {
+  --fondo: #000;
+  --crema: #f4ecd8;
+  --boton: rgba(255, 255, 255, 0.08);
+  --boton-borde: rgba(255, 255, 255, 0.18);
+  --boton-activo: rgba(244, 236, 216, 0.92);
+}
+
+* { box-sizing: border-box; margin: 0; }
+
+html, body {
+  height: 100%;
+  background: var(--fondo);
+  overflow: hidden;
+  /* Evita el destello azul al tocar en el móvil y el "tirar para recargar" */
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+
+canvas {
+  position: fixed;
+  touch-action: manipulation; /* tocar dos veces no hace zoom en el iPhone */
+  inset: 0;
+  display: block;
+  cursor: pointer;
+}
+
+.titulo {
+  position: fixed;
+  top: max(4vh, env(safe-area-inset-top));
+  left: 0;
+  right: 0;
+  padding: 0 16px;
+  text-align: center;
+  font-family: "Instrument Serif", Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(26px, 5.2vw, 52px);
+  line-height: 1.05;
+  color: var(--crema);
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.9);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+.titulo.visible { opacity: 1; }
+
+.controles {
+  position: fixed;
+  left: 50%;
+  bottom: max(20px, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  padding: 6px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.controles button {
+  font: 500 14px/1 ui-monospace, Menlo, Consolas, monospace;
+  color: var(--crema);
+  background: var(--boton);
+  border: 1px solid var(--boton-borde);
+  border-radius: 999px;
+  padding: 10px 16px;
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.1s ease;
+}
+.controles button:active { transform: scale(0.96); }
+.controles button[aria-pressed="true"] {
+  background: var(--boton-activo);
+  color: #111;
+}
+@media (hover: hover) {
+  .controles button:hover { background: rgba(255, 255, 255, 0.16); }
+  .controles button[aria-pressed="true"]:hover { background: var(--crema); }
+}
+
+/* Móvil en horizontal: título en una línea y botones más pequeños */
+@media (orientation: landscape) and (max-height: 500px) {
+  .titulo { font-size: 22px; top: 8px; }
+  .titulo br { display: none; }
+  .controles { bottom: 8px; padding: 4px; }
+  .controles button { padding: 7px 12px; font-size: 12px; }
+}
+
+/* ---------- Pantalla de inicio ---------- */
+.inicio {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 0 16px;
+  background: var(--fondo);
+  transition: opacity 0.5s ease;
+}
+.inicio.oculto { opacity: 0; pointer-events: none; }
+
+.inicio-sub {
+  margin-top: 12vh;
+  font: 500 13px/1 ui-monospace, Menlo, Consolas, monospace;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(244, 236, 216, 0.6);
+}
+
+.tarjetas {
+  display: flex;
+  gap: 14px;
+  width: 100%;
+  max-width: 560px;
+}
+
+.tarjeta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 22px 8px 18px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--boton-borde);
+  border-radius: 18px;
+  color: var(--crema);
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease;
+}
+.tarjeta:active { transform: scale(0.97); }
+@media (hover: hover) {
+  .tarjeta:hover { background: rgba(255, 255, 255, 0.08); border-color: rgba(244, 236, 216, 0.5); }
+}
+
+.tarjeta pre {
+  font: bold clamp(11px, 3.2vw, 15px)/1.15 Menlo, Consolas, "Courier New", monospace;
+  text-align: left;
+}
+.tarjeta .r { color: #ff5a6e; }
+.tarjeta .a { color: #ffd23f; }
+.tarjeta .p { color: #f07ac0; }
+.tarjeta .az { color: #6f8ff5; }
+.tarjeta .m { color: #9a63e6; }
+.tarjeta .v { color: #6fcf6f; }
+
+.tarjeta-nombre {
+  font-family: "Instrument Serif", Georgia, serif;
+  font-style: italic;
+  font-size: 28px;
+  line-height: 1;
+}
+
+.controles.oculto { opacity: 0; pointer-events: none; }
+.controles { transition: opacity 0.5s ease; }
+
+@media (orientation: landscape) and (max-height: 500px) {
+  .inicio { gap: 10px; }
+  .inicio-sub { margin-top: 40px; }
+  .tarjeta { padding: 12px 8px 10px; gap: 8px; }
+  .tarjeta pre { font-size: 10px; }
+  .tarjeta-nombre { font-size: 22px; }
+}
+
+/* El título queda por encima de la pantalla de inicio */
+.titulo { z-index: 2; }
+.inicio { z-index: 1; }
+.controles { z-index: 3; }
